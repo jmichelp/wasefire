@@ -20,8 +20,12 @@ use core::slice;
 use embedded_storage::nor_flash::{
     ErrorType, NorFlash, NorFlashError, NorFlashErrorKind, ReadNorFlash,
 };
-use nrf52840_hal::nvmc::Nvmc;
-use nrf52840_hal::pac::NVMC;
+#[cfg(feature = "nrf52833")]
+use nrf52833_hal as nrf5x_hal;
+#[cfg(feature = "nrf52840")]
+use nrf52840_hal as nrf5x_hal;
+use nrf5x_hal::nvmc::Nvmc;
+use nrf5x_hal::pac::NVMC;
 use wasefire_store::{self as store, StorageError, StorageIndex, StorageResult};
 
 const PAGE_SIZE: usize = <Nvmc<NVMC>>::ERASE_SIZE;

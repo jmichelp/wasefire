@@ -16,9 +16,13 @@ use alloc::boxed::Box;
 
 use cortex_m::prelude::_embedded_hal_timer_CountDown;
 use embedded_hal::timer::Cancel;
-use nrf52840_hal::pac::{TIMER0, TIMER1, TIMER2, TIMER3, TIMER4};
-use nrf52840_hal::timer::{Instance, OneShot, Periodic};
-use nrf52840_hal::Timer;
+#[cfg(feature = "nrf52833")]
+use nrf52833_hal as nrf5x_hal;
+#[cfg(feature = "nrf52840")]
+use nrf52840_hal as nrf5x_hal;
+use nrf5x_hal::pac::{TIMER1, TIMER2, TIMER3, TIMER4};
+use nrf5x_hal::timer::{Instance, OneShot, Periodic};
+use nrf5x_hal::Timer;
 use wasefire_board_api::timer::{Api, Command};
 use wasefire_board_api::{Error, Id, Support};
 use wasefire_logger as logger;
@@ -28,7 +32,7 @@ use crate::with_state;
 pub enum Impl {}
 
 impl Support<usize> for Impl {
-    const SUPPORT: usize = 5;
+    const SUPPORT: usize = 4;
 }
 
 impl Api for Impl {
@@ -55,9 +59,8 @@ impl Api for Impl {
 pub struct Timers([ErasedTimer; <Impl as Support<usize>>::SUPPORT]);
 
 impl Timers {
-    pub fn new(t0: TIMER0, t1: TIMER1, t2: TIMER2, t3: TIMER3, t4: TIMER4) -> Self {
+    pub fn new(t1: TIMER1, t2: TIMER2, t3: TIMER3, t4: TIMER4) -> Self {
         Timers([
-            ErasedTimer::new(t0),
             ErasedTimer::new(t1),
             ErasedTimer::new(t2),
             ErasedTimer::new(t3),

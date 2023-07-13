@@ -19,8 +19,12 @@ if [ ! -e ../../target/applet.wasm ]; then
   mkdir -p ../../target
   touch ../../target/applet.wasm
 fi
-cargo check --target=thumbv7em-none-eabi --features=debug
-DEFMT_LOG=trace cargo check --target=thumbv7em-none-eabi --features=debug
-cargo check --target=thumbv7em-none-eabi --features=release
+cargo check --target=thumbv7em-none-eabi --features=debug,nrf52840
+cargo check --target=thumbv7em-none-eabi --features=debug,nrf52833
+DEFMT_LOG=trace cargo check --target=thumbv7em-none-eabi --features=debug,nrf52840
+cargo check --target=thumbv7em-none-eabi --features=debug,nrf52833
+cargo check --target=thumbv7em-none-eabi --features=release,nrf52840
+cargo check --target=thumbv7em-none-eabi --features=debug,nrf52833
 cargo fmt -- --check
-cargo clippy --target=thumbv7em-none-eabi --features=debug -- --deny=warnings
+cargo clippy --target=thumbv7em-none-eabi --features=debug,nrf52840 -- --deny=warnings
+cargo check --target=thumbv7em-none-eabi --features=debug,nrf52833

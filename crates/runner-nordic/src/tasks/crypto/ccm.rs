@@ -14,7 +14,11 @@
 
 use alloc::vec;
 
-use nrf52840_hal::ccm::CcmData;
+#[cfg(feature = "nrf52833")]
+use nrf52833_hal as nrf5x_hal;
+#[cfg(feature = "nrf52840")]
+use nrf52840_hal as nrf5x_hal;
+use nrf5x_hal::ccm::CcmData;
 use typenum::{U13, U16, U4};
 use wasefire_board_api::crypto::aead::{AeadSupport, Api, Array};
 use wasefire_board_api::{Error, Support};

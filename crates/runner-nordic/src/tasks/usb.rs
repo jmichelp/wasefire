@@ -12,7 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use nrf52840_hal::usbd::{UsbPeripheral, Usbd};
+#[cfg(feature = "nrf52833")]
+use nrf52833_hal as nrf5x_hal;
+#[cfg(feature = "nrf52840")]
+use nrf52840_hal as nrf5x_hal;
+use nrf5x_hal::usbd::{UsbPeripheral, Usbd};
 use wasefire_board_api::usb::serial::{HasSerial, Serial, WithSerial};
 use wasefire_board_api::usb::Api;
 

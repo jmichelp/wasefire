@@ -23,6 +23,7 @@ use wasefire_logger as logger;
 use crate::Scheduler;
 
 pub mod button;
+pub mod radio;
 pub mod timer;
 pub mod usb;
 
@@ -33,6 +34,7 @@ pub mod usb;
 #[derivative(PartialOrd = "feature_allow_slow_enum", Ord = "feature_allow_slow_enum")]
 pub enum Key<B: Board> {
     Button(button::Key<B>),
+    Radio(radio::Key),
     Timer(timer::Key<B>),
     Usb(usb::Key),
 }
@@ -41,6 +43,7 @@ impl<'a, B: Board> From<&'a Event<B>> for Key<B> {
     fn from(event: &'a Event<B>) -> Self {
         match event {
             Event::Button(event) => Key::Button(event.into()),
+            Event::Radio(event) => Key::Radio(event.into()),
             Event::Timer(event) => Key::Timer(event.into()),
             Event::Usb(event) => Key::Usb(event.into()),
         }
@@ -76,6 +79,7 @@ pub fn process<B: Board>(scheduler: &mut Scheduler<B>, event: Event<B>) {
     let mut params = vec![*func, *data];
     match event {
         Event::Button(event) => button::process(event, &mut params),
+        Event::Radio(_) => radio::process(),
         Event::Timer(_) => timer::process(),
         Event::Usb(event) => usb::process(event),
     }

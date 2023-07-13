@@ -19,7 +19,18 @@ use std::path::PathBuf;
 
 fn main() {
     let out = &PathBuf::from(env::var_os("OUT_DIR").unwrap());
-    File::create(out.join("memory.x")).unwrap().write_all(include_bytes!("memory.x")).unwrap();
+    #[cfg(feature = "nrf52833")]
+    File::create(out.join("memory.x"))
+        .unwrap()
+        .write_all(include_bytes!("nrf52833_memory.x"))
+        .unwrap();
+    #[cfg(feature = "nrf52840")]
+    File::create(out.join("memory.x"))
+        .unwrap()
+        .write_all(include_bytes!("nrf52840_memory.x"))
+        .unwrap();
     println!("cargo:rustc-link-search={}", out.display());
-    println!("cargo:rerun-if-changed=memory.x");
+    // TODO(jmichel): Should we feature-gate these too?
+    println!("cargo:rerun-if-changed=nrf52833_memory.x");
+    println!("cargo:rerun-if-changed=nrf52840_memory.x");
 }

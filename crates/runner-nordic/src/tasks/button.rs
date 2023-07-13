@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use nrf52840_hal::gpio::{Input, Pin, PullUp};
-use nrf52840_hal::gpiote::{Gpiote, GpioteChannel};
+#[cfg(feature = "nrf52833")]
+use nrf52833_hal as nrf5x_hal;
+#[cfg(feature = "nrf52840")]
+use nrf52840_hal as nrf5x_hal;
+use nrf5x_hal::gpio::{Input, Pin, PullUp};
+use nrf5x_hal::gpiote::{Gpiote, GpioteChannel};
 use wasefire_board_api::button::Api;
 use wasefire_board_api::{Error, Id, Support};
 

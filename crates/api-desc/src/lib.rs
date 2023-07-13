@@ -25,6 +25,7 @@ mod debug;
 mod id;
 mod led;
 mod macros;
+mod radio;
 mod rng;
 mod scheduling;
 mod store;
@@ -43,6 +44,7 @@ impl Default for Api {
             crypto::new(),
             debug::new(),
             led::new(),
+            radio::new(),
             rng::new(),
             scheduling::new(),
             store::new(),
