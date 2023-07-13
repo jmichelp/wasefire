@@ -21,8 +21,23 @@ pub(crate) fn new() -> Item {
     let name = "radio".into();
     let items = vec![
         item! {
+            /// Reads radio packet into a buffer.
+            fn read "rr" {
+                /// Address of the buffer.
+                ptr: *mut u8,
+
+                /// Length of the buffer in bytes.
+                len: usize,
+            } -> {
+                /// Number of bytes read (or negative value for errors).
+                ///
+                /// This function does not block and may return zero.
+                len: isize,
+            }
+        },
+        item! {
             /// Register a handler for radio events.
-            fn register "rr" {
+            fn register "re" {
                 /// Function called on radio events.
                 ///
                 /// The function takes its opaque `data` as argument.
@@ -34,8 +49,14 @@ pub(crate) fn new() -> Item {
         },
         item! {
             /// Unregister handlers for radio events.
-            fn unregister "ru" {
+            fn unregister "rd" {
             } -> {}
+        },
+        item! {
+            /// Describes errors on radio operations.
+            enum Error {
+                Unknown = 0,
+            }
         },
     ];
     Item::Mod(Mod { docs, name, items })

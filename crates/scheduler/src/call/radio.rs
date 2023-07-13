@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 use wasefire_applet_api::radio::{self as api, Api};
 use wasefire_board_api::radio::Api as _;
-use wasefire_board_api::{self as board, Api as Board, Id, Support};
+use wasefire_board_api::{self as board, Api as Board};
 
 use crate::event::radio::Key;
 use crate::event::Handler;
@@ -25,9 +24,9 @@ pub fn process<B: Board>(call: Api<DispatchSchedulerCall<B>>) {
     match call {
         Api::Register(call) => register(call),
         Api::Unregister(call) => unregister(call),
+        Api::Read(call) => read(call),
     }
 }
-
 
 fn register<B: Board>(mut call: SchedulerCall<B, api::register::Sig>) {
     let api::register::Params { handler_func, handler_data } = call.read();
@@ -50,6 +49,21 @@ fn unregister<B: Board>(mut call: SchedulerCall<B, api::unregister::Sig>) {
         board::Radio::<B>::disable().map_err(|_| Trap)?;
         call.scheduler().disable_event(Key::Received.into())?;
         api::unregister::Results {}
+    };
+    call.reply(results);
+}
+
+fn read<B: Board>(mut call: SchedulerCall<B, api::read::Sig>) {
+    let api::read::Params { ptr, len } = call.read();
+    let scheduler = call.scheduler();
+    let memory = scheduler.applet.memory();
+    let results = try {
+        let output = memory.get_mut(*ptr, *len)?;
+        let len = match board::radio::<B>::read(output) {
+            Ok(len) => (len as u32).into(),
+            Err(_) => u32::MAX.into(),
+        };
+        api::read::Results { len }
     };
     call.reply(results);
 }

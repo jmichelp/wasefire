@@ -15,8 +15,22 @@
 use alloc::boxed::Box;
 
 use wasefire_applet_api::radio as api;
+use wasefire_applet_api::radio::Error;
 
-/// Provides callback support for button events.
+/// Reads from radio packet queue into a buffer without blocking.
+///
+/// Returns how many bytes were read (and thus written to the buffer). This function does not block,
+/// so if there are no data available for read, zero is returned.
+pub fn read(buf: &mut [u8]) -> Result<usize, Error> {
+    let params = api::read::Params { ptr: buf.as_mut_ptr(), len: buf.len() };
+    let api::read::Results { len } = unsafe { api::read(params) };
+    if len < 0 {
+        return Err(Error::Unknown);
+    }
+    Ok(len as usize)
+}
+
+/// Provides callback support for radio events.
 pub trait Handler: 'static {
     /// Called when a radio packet is received.
     fn event(&self);
@@ -37,16 +51,12 @@ pub struct Listener<H: Handler> {
 impl<H: Handler> Listener<H> {
     /// Starts listening for radio events.
     ///
-    /// The `button` argument is the index of the button to listen events for. It must be less than
-    /// [count()]. The `handler` argument is the callback to be called on events. Note that it may
-    /// be an `Fn(state: State)` closure, see [Handler::event()] for callback documentation.
-    ///
     /// The listener stops listening when dropped.
     ///
     /// # Examples
     ///
     /// ```ignore
-    /// Listener::new(index, |state| debug!("Button has been {state:?}"))
+    /// Listener::new(|| debug!("Radio packet has been received"))
     /// ```
     pub fn new(handler: H) -> Self {
         let handler_func = Self::call;

@@ -29,7 +29,7 @@ impl<B: Board> From<Key> for crate::event::Key<B> {
 impl<'a> From<&'a Event> for Key {
     fn from(event: &'a Event) -> Self {
         match event {
-            Event::Received => Key::Received
+            Event::Received => Key::Received,
         }
     }
 }

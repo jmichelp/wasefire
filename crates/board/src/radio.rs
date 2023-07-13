@@ -13,7 +13,6 @@
 // limitations under the License.
 
 //! Radio interface.
-//!
 
 use crate::{Error, Support, Unsupported};
 
@@ -39,9 +38,9 @@ pub trait Api: Support<bool> {
     fn disable() -> Result<(), Error>;
 
     /// Reads from the radio receive queue into a buffer.
-    /// 
+    ///
     /// Returns the number of bytes read. It could be zero if there's nothing to read.
-    fn read(output: &mut [u8]) ->  Result<usize, Error>;
+    fn read(output: &mut [u8]) -> Result<usize, Error>;
 }
 
 impl Api for Unsupported {

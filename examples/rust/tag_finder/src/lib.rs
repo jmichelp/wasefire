@@ -44,10 +44,15 @@ wasefire::applet!();
 
 fn main() {
     // We define a radio handler printing the new state.
-    let handler = move || debug!("BLE packet received.");
+    let handler = || {
+        debug!("BLE packet received.");
+        let mut buf: [u8; 256] = [0; 256];
+        let res = radio::read(&mut buf);
+        debug!("radio::read() -> {:?}", res);
+    };
 
     // We start listening for state changes with the handler.
-    let listener = radio::Listener::new(handler);
+    let _listener = radio::Listener::new(handler);
 
     // We indefinitely wait for callbacks.
     scheduling::wait_indefinitely();
