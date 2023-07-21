@@ -59,7 +59,7 @@ fn read<B: Board>(mut call: SchedulerCall<B, api::read::Sig>) {
     let memory = scheduler.applet.memory();
     let results = try {
         let output = memory.get_mut(*ptr, *len)?;
-        let len = match board::radio::<B>::read(output) {
+        let len = match board::Radio::<B>::read(output) {
             Ok(len) => (len as u32).into(),
             Err(_) => u32::MAX.into(),
         };
